@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A cute Valentine's Day page to ask someone to be your Valentine!">
+  <meta name="theme-color" content="#ffd0e5">
+  <title>Valentine's Day</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    .gradient-background {
+      background: linear-gradient(180deg, #ffd0e5 0%, #ffe8f2 36%, #ffffff 100%);
+      min-height: 100vh;
+    }
+
+    .bounce {
+      animation: bounce 2s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-20px);
+      }
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+  </style>
+  <!-- Preload images so transitions feel instant -->
+  <link rel="preload" as="image" href="./images/image1.gif">
+  <link rel="preload" as="image" href="./images/image2.gif">
+  <link rel="preload" as="image" href="./images/image3.gif">
+  <link rel="preload" as="image" href="./images/image4.gif">
+  <link rel="preload" as="image" href="./images/image5.gif">
+  <link rel="preload" as="image" href="./images/image6.gif">
+  <link rel="preload" as="image" href="./images/image7.gif">
+</head>
+<body class="gradient-background">
+  <main class="flex items-center justify-center min-h-screen py-8 px-4">
+    <section class="flex flex-col items-center w-full max-w-lg">
+      <img
+        id="imageDisplay"
+        src="./images/image1.gif"
+        alt="Cute kitten with flowers"
+        class="rounded-md h-[300px] object-cover"
+      />
+      <h1 id="valentineQuestion" class="text-4xl font-bold italic text-[#bd1e59] my-4 text-center">
+        Will you be my Valentine?
+      </h1>
+      <div id="responseButtons" class="flex gap-4 pt-5 items-center">
+        <button
+          id="yesButton"
+          class="bounce inline-flex items-center justify-center whitespace-nowrap rounded-md text-xl font-medium cursor-pointer px-4 py-2 bg-green-500 text-white transition-all duration-300 ease-in-out hover:bg-green-400 min-h-12 min-w-[75px]"
+        >
+          Yes
+        </button>
+        <button
+          id="noButton"
+          class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xl font-medium cursor-pointer px-4 py-2 bg-red-500 text-white transition-colors hover:bg-red-700 h-12 min-w-[75px]"
+        >
+          No
+        </button>
+      </div>
+
+      <!-- Button shown after clicking "Yes" to open the Certificate -->
+      <div id="postYesContainer" class="hidden flex flex-col items-center pt-2">
+        <button
+          id="openCertificateBtn"
+          type="button"
+          class="bounce inline-flex items-center justify-center gap-2 rounded-xl text-lg font-bold cursor-pointer px-6 py-3 bg-[#bd1e59] text-white transition-all duration-300 ease-in-out hover:bg-[#a0184a] shadow-lg hover:shadow-pink-300 hover:scale-105 active:scale-95"
+        >
+          <span>📜</span> Open Valentine Certificate 💕
+        </button>
+      </div>
+
+      <!-- 📜 Official Valentine Certificate (Opens on clicking the button) -->
+      <div id="certificateCard" class="hidden w-full bg-white/95 backdrop-blur border-4 border-dashed border-[#bd1e59] rounded-2xl p-6 shadow-2xl text-center mt-6 transition-all duration-500">
+        <div class="text-xs uppercase tracking-widest text-[#bd1e59] font-bold mb-1">
+          📜 Official Document 📜
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-[#bd1e59] italic mb-3">
+          Certificate of Valentine Partnership
+        </h2>
+
+        <p class="text-gray-700 text-sm sm:text-base mb-3 leading-relaxed">
+          This certifies that you have officially and unconditionally agreed to be my Valentine for 2026 and forever after!
+        </p>
+
+        <div class="bg-[#ffe8f2] text-[#bd1e59] text-xs sm:text-sm py-2.5 px-3 rounded-lg mb-5 font-medium border border-[#ffd0e5]">
+          ✨ <strong>Terms & Conditions:</strong> Entitled to unlimited cuddles, snacks, cute dates, and forehead kisses. Strictly non-refundable.
+        </div>
+
+        <!-- Signatures & Paw Stamp Area -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-3 text-left">
+          <!-- Partner Signature -->
+          <div class="flex flex-col items-center border border-pink-100 bg-pink-50/40 p-3 rounded-xl">
+            <span class="text-xs font-semibold text-gray-500 mb-1">Your Partner</span>
+            <div class="h-16 flex items-center justify-center font-bold text-lg text-[#bd1e59] italic">
+              Signed with Love 💖
+            </div>
+            <div class="w-full border-b-2 border-dashed border-gray-300 mt-1"></div>
+            <span class="text-[11px] text-gray-400 mt-1">Official Valentine Proposer</span>
+          </div>
+
+          <!-- Interactive Signature / Paw Stamp -->
+          <div class="flex flex-col items-center border border-pink-100 bg-pink-50/40 p-3 rounded-xl relative">
+            <span class="text-xs font-semibold text-gray-500 mb-1">Your Signature / Paw Stamp</span>
+            <div class="relative w-full h-16 bg-white rounded border border-pink-200 overflow-hidden flex items-center justify-center shadow-inner">
+              <canvas id="signatureCanvas" width="220" height="64" class="w-full h-full cursor-crosshair touch-none"></canvas>
+            </div>
+            <div class="w-full border-b-2 border-dashed border-gray-300 mt-1"></div>
+            
+            <!-- Controls: Stamp Paw & Clear Signature -->
+            <div class="flex gap-2 mt-2 w-full justify-center">
+              <button
+                id="stampPawBtn"
+                type="button"
+                class="px-2.5 py-1 text-xs font-semibold bg-[#ffd0e5] text-[#bd1e59] rounded-md hover:bg-[#ffb6d9] active:scale-95 transition cursor-pointer flex items-center gap-1 shadow-sm"
+              >
+                <span>🐾</span> Stamp Paw
+              </button>
+              <button
+                id="clearSignBtn"
+                type="button"
+                class="px-2.5 py-1 text-xs font-semibold bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 active:scale-95 transition cursor-pointer flex items-center gap-1 shadow-sm"
+              >
+                <span>↺</span> Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date & Sealed Badge -->
+        <div class="flex flex-wrap items-center justify-between text-xs text-gray-500 mt-4 pt-3 border-t border-pink-100">
+          <div>
+            <strong>Date:</strong> <span id="certificateDate">February 14, 2026</span>
+          </div>
+          <div class="flex items-center gap-1 text-[#bd1e59] font-bold">
+            <span>❤️ Sealed with a Kiss</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 📸 Floating Instagram Link (Bottom Right) -->
+  <a
+    href="https://www.instagram.com/the.cipher.stack"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="fixed bottom-4 right-4 z-50 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/85 backdrop-blur-md border border-pink-200 shadow-md text-gray-700 hover:text-[#bd1e59] hover:border-pink-300 hover:bg-pink-50 hover:shadow-lg transition-all duration-300 group hover:scale-105 active:scale-95 text-xs font-semibold"
+    aria-label="Instagram @the.cipher.stack"
+  >
+    <svg class="w-4 h-4 text-[#bd1e59] transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+    </svg>
+    <span>@the.cipher.stack</span>
+  </a>
+
+  <script>
+    (() => {
+      // DOM references
+      const yesButton = document.getElementById('yesButton');
+      const noButton = document.getElementById('noButton');
+      const imageDisplay = document.getElementById('imageDisplay');
+      const valentineQuestion = document.getElementById('valentineQuestion');
+      const responseButtons = document.getElementById('responseButtons');
+      const postYesContainer = document.getElementById('postYesContainer');
+      const openCertificateBtn = document.getElementById('openCertificateBtn');
+      const certificateCard = document.getElementById('certificateCard');
+      const certificateDate = document.getElementById('certificateDate');
+      const signatureCanvas = document.getElementById('signatureCanvas');
+      const stampPawBtn = document.getElementById('stampPawBtn');
+      const clearSignBtn = document.getElementById('clearSignBtn');
+
+      // Configuration
+      const GROWTH_PER_CLICK = 35;
+      const FONT_GROWTH_PER_CLICK = 25;
+      const MAX_NO_CLICKS = 5;
+
+      const IMAGE_PATHS = [
+        './images/image1.gif',
+        './images/image2.gif',
+        './images/image3.gif',
+        './images/image4.gif',
+        './images/image5.gif',
+        './images/image6.gif',
+        './images/image7.gif',
+      ];
+
+      const NO_BUTTON_MESSAGES = [
+        'No',
+        'Are you sure?',
+        'Pookie please',
+        "Don't do this to me :(",
+        "You're breaking my heart",
+        "I'm gonna cry...",
+      ];
+
+      const ALT_TEXTS = [
+        'Cute kitten with flowers',
+        'Sad kitten looking up',
+        'Kitten begging',
+        'Heartbroken kitten',
+        'Crying kitten',
+        'Devastated kitten',
+        'Happy kitten celebrating',
+      ];
+
+      // State
+      let noClickCount = 0;
+      let buttonHeight = 48;
+      let buttonWidth = 80;
+      let fontSize = 20;
+
+      noButton.addEventListener('click', () => {
+        if (noClickCount >= MAX_NO_CLICKS) return;
+
+        noClickCount++;
+
+        // Update image and alt text
+        imageDisplay.src = IMAGE_PATHS[noClickCount];
+        imageDisplay.alt = ALT_TEXTS[noClickCount];
+
+        // Grow the "Yes" button to make it harder to ignore
+        buttonHeight += GROWTH_PER_CLICK;
+        buttonWidth += GROWTH_PER_CLICK;
+        fontSize += FONT_GROWTH_PER_CLICK;
+
+        yesButton.style.height = `${buttonHeight}px`;
+        yesButton.style.width = `${buttonWidth}px`;
+        yesButton.style.fontSize = `${fontSize}px`;
+
+        // Update "No" button text with increasingly desperate messages
+        noButton.textContent = NO_BUTTON_MESSAGES[noClickCount];
+      });
+
+      // Canvas Drawing Logic
+      let isDrawing = false;
+      const ctx = signatureCanvas.getContext('2d');
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#bd1e59';
+
+      function getCanvasCoordinates(e) {
+        const rect = signatureCanvas.getBoundingClientRect();
+        const scaleX = signatureCanvas.width / rect.width;
+        const scaleY = signatureCanvas.height / rect.height;
+
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+
+        if (e.touches && e.touches.length > 0) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        }
+
+        return {
+          x: (clientX - rect.left) * scaleX,
+          y: (clientY - rect.top) * scaleY,
+        };
+      }
+
+      function startDrawing(e) {
+        isDrawing = true;
+        const coords = getCanvasCoordinates(e);
+        ctx.beginPath();
+        ctx.moveTo(coords.x, coords.y);
+      }
+
+      function draw(e) {
+        if (!isDrawing) return;
+        if (e.touches) e.preventDefault();
+        const coords = getCanvasCoordinates(e);
+        ctx.lineTo(coords.x, coords.y);
+        ctx.stroke();
+      }
+
+      function stopDrawing() {
+        if (isDrawing) {
+          ctx.closePath();
+          isDrawing = false;
+        }
+      }
+
+      // Mouse events
+      signatureCanvas.addEventListener('mousedown', startDrawing);
+      signatureCanvas.addEventListener('mousemove', draw);
+      signatureCanvas.addEventListener('mouseup', stopDrawing);
+      signatureCanvas.addEventListener('mouseleave', stopDrawing);
+
+      // Touch events (mobile)
+      signatureCanvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        startDrawing(e);
+      }, { passive: false });
+      signatureCanvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        draw(e);
+      }, { passive: false });
+      signatureCanvas.addEventListener('touchend', stopDrawing);
+
+      // Draw cute paw print directly onto the canvas
+      function stampPawPrint(x = signatureCanvas.width / 2, y = signatureCanvas.height / 2, size = 18, color = '#bd1e59') {
+        ctx.save();
+        ctx.fillStyle = color;
+
+        // Main paw pad
+        ctx.beginPath();
+        ctx.ellipse(x, y + size * 0.22, size * 0.52, size * 0.42, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 4 Toe beans
+        const toes = [
+          { dx: -size * 0.44, dy: -size * 0.18, rx: size * 0.17, ry: size * 0.23, rot: -0.32 },
+          { dx: -size * 0.17, dy: -size * 0.42, rx: size * 0.17, ry: size * 0.25, rot: -0.1 },
+          { dx: size * 0.17, dy: -size * 0.42, rx: size * 0.17, ry: size * 0.25, rot: 0.1 },
+          { dx: size * 0.44, dy: -size * 0.18, rx: size * 0.17, ry: size * 0.23, rot: 0.32 },
+        ];
+
+        toes.forEach((t) => {
+          ctx.beginPath();
+          ctx.ellipse(x + t.dx, y + t.dy, t.rx, t.ry, t.rot, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        ctx.restore();
+      }
+
+      stampPawBtn.addEventListener('click', () => {
+        // Stamp paw print with slight random jitter for a real stamped feel
+        const randomX = signatureCanvas.width / 2 + (Math.random() * 20 - 10);
+        const randomY = signatureCanvas.height / 2 + (Math.random() * 8 - 4);
+        stampPawPrint(randomX, randomY, 18, '#bd1e59');
+
+        // Mini confetti pop on stamp
+        confetti({
+          particleCount: 15,
+          spread: 50,
+          origin: { y: 0.75 },
+          colors: ['#ff69b4', '#ff1493', '#ffd0e5'],
+        });
+      });
+
+      clearSignBtn.addEventListener('click', () => {
+        ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+      });
+
+      // Set formatted date
+      const today = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      certificateDate.textContent = today.toLocaleDateString('en-US', options);
+
+      yesButton.addEventListener('click', () => {
+        imageDisplay.src = IMAGE_PATHS[IMAGE_PATHS.length - 1];
+        imageDisplay.alt = ALT_TEXTS[ALT_TEXTS.length - 1];
+        valentineQuestion.textContent = 'Yayyy!! :3';
+        responseButtons.style.display = 'none';
+
+        // Show the button to open the certificate
+        postYesContainer.classList.remove('hidden');
+        postYesContainer.classList.add('fade-in-up');
+
+        // Heart-shaped confetti celebration
+        const heart = confetti.shapeFromPath({
+          path: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
+        });
+
+        const defaults = { spread: 360, ticks: 100, gravity: 0, decay: 0.94, startVelocity: 20, shapes: [heart], colors: ['#ff69b4', '#ff1493', '#ff6b81', '#e84393'] };
+
+        confetti({ ...defaults, particleCount: 50, scalar: 2 });
+        confetti({ ...defaults, particleCount: 25, scalar: 3 });
+        confetti({ ...defaults, particleCount: 10, scalar: 4 });
+      });
+
+      // Open / toggle certificate on button click
+      openCertificateBtn.addEventListener('click', () => {
+        const isHidden = certificateCard.classList.contains('hidden');
+        if (isHidden) {
+          certificateCard.classList.remove('hidden');
+          certificateCard.classList.add('fade-in-up');
+          openCertificateBtn.innerHTML = '<span>📜</span> Close Certificate';
+          
+          // Smooth scroll to certificate
+          setTimeout(() => {
+            certificateCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+
+          // Extra mini-confetti burst on certificate opening
+          confetti({
+            particleCount: 35,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#ff69b4', '#ff1493', '#ffd0e5'],
+          });
+        } else {
+          certificateCard.classList.add('hidden');
+          certificateCard.classList.remove('fade-in-up');
+          openCertificateBtn.innerHTML = '<span>📜</span> Open Valentine Certificate 💕';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
